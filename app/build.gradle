@@ -1,0 +1,220 @@
+// 说明module的类型，com.android.application为程序，com.android.library为库
+apply plugin: 'com.android.application'
+
+// 应用名称
+static def ApkName() {
+    return "Lucky"
+}
+
+// 打包日期(当前时间是UTC时区，以20171010格式化时间输出)
+static def BuildTime() {
+    return new Date().format("yyyyMMdd", TimeZone.getTimeZone("UTC"))
+}
+
+// 编码格式
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+android {
+
+    compileSdkVersion 27 // 编译的SDK版本
+    buildToolsVersion "27.0.3" // buildTools版本
+    // 默认配置
+    defaultConfig {
+        applicationId "i.am.lucky" // 应用程序的包名
+        minSdkVersion 19 // 支持的最低版本
+        targetSdkVersion 27 // 支持的目标版本
+        versionCode 1 // 版本号
+        versionName "1.0" // 版本名
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        // dex突破65535的限制
+        multiDexEnabled true
+        // 该应用支持运行在以下CPU型号手机上
+        ndk {
+            //选择要添加的对应cpu类型的.so库。
+            abiFilters 'armeabi', 'armeabi-v7a', 'arm64-v8a'
+            // 还可以添加 'x86', 'x86_64', 'mips', 'mips64'
+        }
+        // 信鸽ID, KEY
+        manifestPlaceholders = [
+                XG_ACCESS_ID : "2100270821",
+                XG_ACCESS_KEY: "A4PD641M6ADN",
+        ]
+    }
+
+    // 签名配置
+    signingConfigs {
+        release {
+            storeFile file("../key.jks")
+            keyAlias "android"
+            keyPassword "android"
+            storePassword "android"
+        }
+        debug {
+            // No debug config
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    buildTypes {
+        debug {
+            // 显示Log
+            buildConfigField("boolean", "LOG_DEBUG", "true")
+            // 设置后缀
+            versionNameSuffix "_debug"
+            minifyEnabled false
+            shrinkResources false
+            zipAlignEnabled false
+            signingConfig signingConfigs.debug
+        }
+        release {
+            // 不显示Log
+            buildConfigField("boolean", "LOG_DEBUG", "false")
+            // 混淆
+            minifyEnabled true
+            // Zipalign优化
+            zipAlignEnabled true
+            // 移除无用的resource文件
+            shrinkResources true
+            // 前一部分代表系统默认的android程序的混淆文件，该文件已经包含了基本的混淆声明，后一个文件是自己的定义混淆文件
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+    }
+
+    // 修改打包不能成功配置
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false // lint时候终止错误上报,防止编译的时候莫名的失败
+    }
+
+    // 自定义应用输出名称
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "${ApkName()}_${variant.versionName}_${BuildTime()}.apk"
+            /*_${variant.productFlavors[0].name}*/
+        }
+    }
+
+    // 排除不需要文件，防止库文件构建冲突
+    packagingOptions {
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/DEPENDENCIES.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/dependencies.txt'
+        exclude 'META-INF/LGPL2.1'
+    }
+
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+
+    // 类Google左滑菜单
+    implementation('com.mikepenz:materialdrawer:6.0.2@aar') {
+        transitive = true
+    }
+
+    // Android支持
+    implementation 'com.android.support:support-v4:27.0.2'
+    implementation 'com.android.support:support-v13:27.0.2'
+    implementation 'com.android.support:support-annotations:27.0.2'
+    implementation 'com.android.support:appcompat-v7:27.0.2'
+    implementation 'com.android.support:design:27.0.2'
+    implementation 'com.android.support:cardview-v7:27.0.2'
+
+    // 信鸽稳定版
+    implementation 'com.tencent.xinge:xinge:3.1.81-alpha'
+
+    // wup包
+    implementation 'com.tencent.wup:wup:1.0.0.E-alpha'
+
+    // mid包
+    implementation 'com.tencent.mid:mid:3.721-alpha'
+
+    // 牛油刀注解
+    implementation 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
+    // 图片加载
+    implementation 'com.github.bumptech.glide:glide:4.2.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.2.0'
+
+    // Picasso
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+
+    // 图片选择器
+    implementation 'com.lzy.widget:imagepicker:0.6.1'
+
+    // 视频播放
+    implementation 'com.shuyu:GSYVideoPlayer:2.1.2'
+
+    // 视频录制相关
+    implementation 'com.afollestad:material-camera:0.4.4'
+
+    // 路由相关
+    implementation 'com.github.joyrun.ActivityRouter:router:0.6.2'
+    annotationProcessor 'com.github.joyrun.ActivityRouter:router-compiler:0.6.2'
+
+    // OKHttp,网络封装
+    implementation 'com.squareup.okhttp3:okhttp:3.9.1'
+
+    // AndroidDataStorage,Android缓存
+    implementation 'xiaofei.library:android-data-storage:1.3.0'
+
+    // EventBus,事件总线
+    implementation 'org.greenrobot:eventbus:3.1.0-RC'
+
+    // 酷炫弹框
+    implementation 'com.github.cazaea:sweet-alert-dialog:1.0.0'
+
+    // Guide页面轮播图
+    implementation 'cn.bingoogolapple:bga-banner:2.1.7'
+
+    // xml转换工具
+    implementation 'org.dom4j:dom4j:2.0.0'
+
+    // RecycleView
+    implementation 'com.android.support:recyclerview-v7:27.0.2'
+
+    // RecyclerView适配器
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
+
+    // 柱状图，折线图
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.2'
+
+    // 简易Log打印
+    implementation 'com.orhanobut:logger:2.1.1'
+
+    // 快捷json转对象
+    implementation 'com.google.code.gson:gson:2.8.2'
+
+    // 快捷网络加载
+    implementation 'com.lzy.net:okgo:2.1.4'
+
+    // 二维码扫描
+    implementation 'com.github.cazaea:ScanCode:1.0.0'
+
+    // RoundImageView
+    implementation 'com.makeramen:roundedimageview:2.2.1'
+    implementation project(':recycler')
+
+}
+
+repositories {
+    mavenCentral()
+}

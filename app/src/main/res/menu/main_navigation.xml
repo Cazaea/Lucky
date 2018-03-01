@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_home"
+        android:icon="@drawable/icon_main_home"
+        android:orderInCategory="1"
+        android:title="首页" />
+    <item
+        android:id="@+id/menu_scan"
+        android:icon="@drawable/icon_main_scan"
+        android:orderInCategory="2"
+        android:title="扫码" />
+    <item
+        android:id="@+id/menu_unity"
+        android:icon="@drawable/icon_main_unity"
+        android:orderInCategory="3"
+        android:title="Unity" />
+    <item
+        android:id="@+id/menu_site"
+        android:icon="@drawable/icon_main_web"
+        android:orderInCategory="4"
+        android:title="网站" />
+    <item
+        android:id="@+id/menu_video"
+        android:icon="@drawable/icon_main_video"
+        android:orderInCategory="5"
+        android:title="视频" />
+
+    <!-- 参数说明 -->
+    <!--
+         android:title : 这是标签中默认必须要写的参数，暂时没用到，可以在类BottomMenuItem中通过getTitle()拿到当前tab的title
+
+         app:nb_tabActiveResId : 为当前item(即当前tab）设置当其选中时的图片id。
+
+         app:nb_tabInActiveResId : 为当前item(即当前tab）设置当其未选中时的图片id。
+
+         app:nb_insetLeft : 设置当前Item(即当前tab)的背景图片距离左边缘的距离，具体下面有图解
+
+         app:nb_insetTop : 设置当前Item(即当前tab)的背景图片距离上边缘的距离，具体下面有图解
+
+         app:nb_insetRight ： 设置当前Item(即当前tab)的背景图片距离右边缘的距离，具体下面有图解
+
+         app:nb_insetBottom ： 设置当前Item(即当前tab)的背景图片距离下边缘的距离，具体下面有图解
+    -->
+
+</menu>

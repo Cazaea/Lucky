@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorAppBackground"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/colorPrimary"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="left">
+
+            <ImageView
+                android:id="@+id/mine_iv_back"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="5dp"
+                android:gravity="center"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:visibility="invisible" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="我的"
+            android:textColor="@color/colorWhite"
+            android:textSize="16dp" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="right"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/mine_tv_logout"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:layout_marginRight="10dp"
+                android:gravity="center"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp"
+                android:text="退出"
+                android:textColor="@color/colorWhite" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/mine_swipe"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:background="@color/colorWhite">
+
+                <com.makeramen.roundedimageview.RoundedImageView
+                    android:id="@+id/mine_riv_head_pic"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="24dp"
+                    android:scaleType="centerCrop"
+                    app:riv_border_color="#FFFFFF"
+                    app:riv_border_width="1dp"
+                    app:riv_oval="true" />
+
+                <LinearLayout
+                    android:id="@+id/mine_ll_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="20dp"
+                    android:layout_toRightOf="@+id/mine_riv_head_pic"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/mine_tv_account"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="bottom|left"
+                        android:text="用户名"
+                        android:textColor="@color/colorMainTitle"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:typeface="sans" />
+
+                    <TextView
+                        android:id="@+id/mine_tv_school"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:gravity="top|left"
+                        android:text="学校 镇江中山路小学"
+                        android:textColor="@color/colorSecondary"
+                        android:textSize="14sp"
+                        android:typeface="sans" />
+
+                    <TextView
+                        android:id="@+id/mine_tv_class"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:gravity="top|left"
+                        android:text="班级 三年级二班"
+                        android:textColor="@color/colorSecondary"
+                        android:textSize="14sp"
+                        android:typeface="sans" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@id/mine_ll_info"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:minWidth="60dp"
+                    android:orientation="vertical"
+                    android:paddingRight="15dp"
+                    android:visibility="gone">
+
+
+                    <LinearLayout
+                        android:id="@+id/mine_ll_total_score"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/mine_tv_total_score"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical|right"
+                            android:text="0"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            android:typeface="sans" />
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:paddingTop="7dp"
+                            android:scaleType="fitEnd" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:gravity="top|left"
+                        android:text="总得分"
+                        android:textColor="@color/colorSecondary"
+                        android:textSize="14sp"
+                        android:typeface="sans" />
+
+                </LinearLayout>
+
+
+            </RelativeLayout>
+
+            <!-- 我的轨迹 -->
+            <!--<LinearLayout
+                android:id="@+id/mine_ll_my_track"
+                android:layout_marginTop="10dp"
+                style="@style/mine_four_linear">
+
+                <ImageView
+                    style="@style/mine_four_image"
+                    android:src="@drawable/icon_mine_track" />
+
+                <TextView
+                    style="@style/mine_four_text"
+                    android:text="我的轨迹" />
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/icon_arrow_right" />
+            </LinearLayout>-->
+
+            <!--同学圈-->
+            <!--<LinearLayout-->
+                <!--android:id="@+id/mine_ll_my_classmatecircle"-->
+                <!--style="@style/mine_four_linear"-->
+                <!--android:layout_marginTop="10dp">-->
+
+                <!--<ImageView-->
+                    <!--style="@style/mine_four_image"-->
+                    <!--android:src="@drawable/icon_mine_quanzi_new" />-->
+
+                <!--<TextView-->
+                    <!--style="@style/mine_four_text"-->
+                    <!--android:text="同学圈" />-->
+
+                <!--<ImageView-->
+                    <!--android:layout_width="20dp"-->
+                    <!--android:layout_height="20dp"-->
+                    <!--android:src="@drawable/icon_arrow_right" />-->
+            <!--</LinearLayout>-->
+
+            <!--<LinearLayout-->
+                <!--android:id="@+id/mine_ll_my_landmark"-->
+                <!--style="@style/mine_four_linear"-->
+                <!--android:layout_marginTop="10dp">-->
+
+                <!--<ImageView-->
+                    <!--style="@style/mine_four_image"-->
+                    <!--android:src="@drawable/icon_mine_landmark" />-->
+
+                <!--<TextView-->
+                    <!--style="@style/mine_four_text"-->
+                    <!--android:text="我的里程碑" />-->
+
+                <!--<ImageView-->
+                    <!--android:layout_width="20dp"-->
+                    <!--android:layout_height="20dp"-->
+                    <!--android:src="@drawable/icon_arrow_right" />-->
+            <!--</LinearLayout>-->
+
+            <!--&lt;!&ndash;我的活动&ndash;&gt;-->
+            <!--<LinearLayout-->
+                <!--android:id="@+id/mine_ll_my_activities"-->
+                <!--style="@style/mine_four_linear">-->
+
+                <!--<ImageView-->
+                    <!--style="@style/mine_four_image"-->
+                    <!--android:padding="1dp"-->
+                    <!--android:src="@drawable/icon_mine_gift" />-->
+
+                <!--<TextView-->
+                    <!--style="@style/mine_four_text"-->
+                    <!--android:text="我的活动" />-->
+
+                <!--<ImageView-->
+                    <!--android:layout_width="20dp"-->
+                    <!--android:layout_height="20dp"-->
+                    <!--android:src="@drawable/icon_arrow_right" />-->
+            <!--</LinearLayout>-->
+
+            <!--&lt;!&ndash;我的动态&ndash;&gt;-->
+            <!--<LinearLayout-->
+                <!--android:id="@+id/mine_ll_my_dynamic"-->
+                <!--style="@style/mine_four_linear">-->
+
+                <!--<ImageView-->
+                    <!--style="@style/mine_four_image"-->
+                    <!--android:src="@drawable/icon_mine_notice" />-->
+
+                <!--<TextView-->
+                    <!--style="@style/mine_four_text"-->
+                    <!--android:text="我的动态" />-->
+
+                <!--<ImageView-->
+                    <!--android:layout_width="20dp"-->
+                    <!--android:layout_height="20dp"-->
+                    <!--android:src="@drawable/icon_arrow_right" />-->
+            <!--</LinearLayout>-->
+
+            <!--&lt;!&ndash;我的消息&ndash;&gt;-->
+            <!--<LinearLayout-->
+                <!--android:id="@+id/mine_ll_my_message"-->
+                <!--style="@style/mine_four_linear">-->
+
+                <!--<ImageView-->
+                    <!--style="@style/mine_four_image"-->
+                    <!--android:src="@drawable/icon_mine_message" />-->
+
+                <!--<TextView-->
+                    <!--style="@style/mine_four_text"-->
+                    <!--android:text="我的消息" />-->
+
+                <!--<ImageView-->
+                    <!--android:layout_width="20dp"-->
+                    <!--android:layout_height="20dp"-->
+                    <!--android:src="@drawable/icon_arrow_right" />-->
+            <!--</LinearLayout>-->
+
+            <!--&lt;!&ndash;修改个人资料&ndash;&gt;-->
+            <!--<LinearLayout-->
+                <!--android:id="@+id/mine_ll_my_changeinfo"-->
+                <!--style="@style/mine_four_linear"-->
+                <!--android:layout_marginTop="10dp">-->
+
+                <!--<ImageView-->
+                    <!--style="@style/mine_four_image"-->
+                    <!--android:padding="1dp"-->
+                    <!--android:src="@drawable/icon_settings_edit" />-->
+
+                <!--<TextView-->
+                    <!--style="@style/mine_four_text"-->
+                    <!--android:text="修改个人资料" />-->
+
+                <!--<ImageView-->
+                    <!--android:layout_width="20dp"-->
+                    <!--android:layout_height="20dp"-->
+                    <!--android:src="@drawable/icon_arrow_right" />-->
+            <!--</LinearLayout>-->
+            <!--&lt;!&ndash;修改密码&ndash;&gt;-->
+            <!--<LinearLayout-->
+                <!--android:id="@+id/mine_ll_my_changepwd"-->
+                <!--style="@style/mine_four_linear">-->
+
+                <!--<ImageView-->
+                    <!--style="@style/mine_four_image"-->
+                    <!--android:padding="1dp"-->
+                    <!--android:src="@drawable/icon_settings_password" />-->
+
+                <!--<TextView-->
+                    <!--style="@style/mine_four_text"-->
+                    <!--android:text="修改密码" />-->
+
+                <!--<ImageView-->
+                    <!--android:layout_width="20dp"-->
+                    <!--android:layout_height="20dp"-->
+                    <!--android:src="@drawable/icon_arrow_right" />-->
+            <!--</LinearLayout>-->
+
+            <!--&lt;!&ndash; 绑定手册 &ndash;&gt;-->
+            <!--<LinearLayout-->
+                <!--android:id="@+id/mine_ll_bind_manual"-->
+                <!--style="@style/mine_four_linear">-->
+
+                <!--<ImageView-->
+                    <!--style="@style/mine_four_image"-->
+                    <!--android:src="@drawable/icon_mine_bind" />-->
+
+                <!--<TextView-->
+                    <!--style="@style/mine_four_text"-->
+                    <!--android:text="绑定手册" />-->
+
+                <!--<ImageView-->
+                    <!--android:layout_width="20dp"-->
+                    <!--android:layout_height="20dp"-->
+                    <!--android:src="@drawable/icon_arrow_right" />-->
+            <!--</LinearLayout>-->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorAppBackground"
+                android:gravity="bottom"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="版本："
+                        android:textColor="@color/colorSecondary"
+                        android:textSize="10dp" />
+
+                    <TextView
+                        android:id="@+id/mine_tv_versionname"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="V1.0.1"
+                        android:textColor="@color/colorSecondary"
+                        android:textSize="10dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="技术支持：江苏茴香豆网络科技有限公司"
+                        android:textColor="@color/colorSecondary"
+                        android:textSize="10dp" />
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>
+</LinearLayout>
