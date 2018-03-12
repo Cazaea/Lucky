@@ -113,8 +113,8 @@ public class MainApp extends Application {
     public static int versionCode() {
         int versionCode;
         try {
-            PackageManager manager = app.getPackageManager();
-            PackageInfo info = manager.getPackageInfo(app.getPackageName(), 0);
+            PackageManager manager = getApp().getPackageManager();
+            PackageInfo info = manager.getPackageInfo(getApp().getPackageName(), 0);
             versionCode = info.versionCode;
         } catch (PackageManager.NameNotFoundException e) {
             versionCode = -1;

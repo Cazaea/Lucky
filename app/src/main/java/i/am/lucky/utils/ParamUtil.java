@@ -14,10 +14,11 @@ import xiaofei.library.datastorage.DataStorageFactory;
 import xiaofei.library.datastorage.IDataStorage;
 
 /**
- * Created by Cazaea on 2017/7/28.
+ * @author Cazaea
+ * @time 2018/3/9 10:46
+ * @mail wistorm@sina.com
  */
-
-public class ToolsUtil {
+public class ParamUtil {
 
     /**
      * 获取APP包名

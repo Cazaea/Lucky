@@ -22,7 +22,7 @@ import i.am.lucky.config.AppConfig;
 import i.am.lucky.config.EventConfig;
 import i.am.lucky.data.User;
 import i.am.lucky.utils.DeviceUtil;
-import i.am.lucky.utils.ToolsUtil;
+import i.am.lucky.utils.ParamUtil;
 import okhttp3.Cache;
 import okhttp3.CacheControl;
 import okhttp3.FormBody;
@@ -207,7 +207,7 @@ public class HttpUtil {
         // 添加平台信息
         params.put("platform", "Android");
         // 添加版本号
-        params.put("version", ToolsUtil.getVersionCode(context));
+        params.put("version", ParamUtil.getVersionCode(context));
         // 添加设备编号
         params.put("device_uid", DeviceUtil.getUniqueId(context));
         return params;

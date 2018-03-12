@@ -33,7 +33,7 @@
 //import android.widget.Toast;
 //
 ////import com.hxd.yqczb.utils.CustomDialog;
-////import com.hxd.yqczb.utils.ToolsUtil;
+////import com.hxd.yqczb.utils.ParamUtil;
 ////import com.hxd.yqczb.utils.UrlAnalysis;
 ////import com.hxd.yqczb.utils.configUtils.EventConfig;
 ////import com.hxd.yqczb.utils.configUtils.UrlConfig;
@@ -71,7 +71,7 @@
 //import i.am.lucky.config.EventConfig;
 //import i.am.lucky.config.UrlConfig;
 //import i.am.lucky.data.ShareInfo;
-//import i.am.lucky.utils.ToolsUtil;
+//import i.am.lucky.utils.ParamUtil;
 //import i.am.lucky.utils.UrlAnalysis;
 //import i.am.lucky.view.LoadingDialog;
 //
@@ -127,7 +127,7 @@
 //        }
 //        if (message.equals(EventConfig.EVENT_RELOAD_WEB)) {
 //            String currentUrl = webView.getUrl();
-//            String reloadUrl = ToolsUtil.urlAddUserInfo(getApplicationContext(),currentUrl);
+//            String reloadUrl = ParamUtil.urlAddUserInfo(getApplicationContext(),currentUrl);
 //            webView.loadUrl(reloadUrl);
 //        }
 //    }
@@ -172,7 +172,7 @@
 //
 //        should_close_after_login_fail = "0";
 //
-//        loadUrl(ToolsUtil.urlAddUserInfo(getApplicationContext(),url));
+//        loadUrl(ParamUtil.urlAddUserInfo(getApplicationContext(),url));
 //        //loadUrl(url);
 //    }
 //

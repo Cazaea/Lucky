@@ -2,6 +2,7 @@ package i.am.lucky.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.thejoyrun.router.Router;
@@ -10,6 +11,7 @@ import com.thejoyrun.router.RouterActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.bingoogolapple.bgabanner.BGABanner;
+import cn.bingoogolapple.bgabanner.BGALocalImageSize;
 import i.am.lucky.R;
 import i.am.lucky.app.MainApp;
 import i.am.lucky.config.AppConfig;
@@ -28,11 +30,6 @@ public class GuideActivity extends AppCompatActivity {
     TextView tvGuideEnter;
 
     private PreferUtil preferUtil;
-
-    // 每一页的控件集合
-    private int[] views;
-    // 每一页的提示文案
-    private int[] images;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,10 +68,20 @@ public class GuideActivity extends AppCompatActivity {
 
     private void initData() {
 
-        views = new int[]{R.drawable.guide1, R.drawable.guide2, R.drawable.guide3, R.drawable.guide4};
-        images = new int[]{R.drawable.fore_guide1, R.drawable.fore_guide2, R.drawable.fore_guide3, R.drawable.fore_guide4};
-        bannerGuideBackground.setData(views);
-        bannerGuideForeground.setData(images);
+        // Bitmap 的宽高在 maxWidth maxHeight 和 minWidth minHeight 之间
+        BGALocalImageSize localImageSize = new BGALocalImageSize(720, 1280, 320, 640);
+        // 前背景数据源
+        bannerGuideForeground.setData(localImageSize, ImageView.ScaleType.CENTER_CROP,
+                R.drawable.fore_guide1,
+                R.drawable.fore_guide2,
+                R.drawable.fore_guide3,
+                R.drawable.fore_guide4);
+        // 后背景数据源
+        bannerGuideBackground.setData(localImageSize, ImageView.ScaleType.CENTER_CROP,
+                R.drawable.back_guide1,
+                R.drawable.back_guide2,
+                R.drawable.back_guide3,
+                R.drawable.back_guide4);
 
     }
 

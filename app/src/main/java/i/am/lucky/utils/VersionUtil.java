@@ -17,17 +17,16 @@ public class VersionUtil {
      * @param context
      * @return
      */
-    public static int getApkVersion(Context context) {
-        int v = -1;
+    public static int getApkVersionCode(Context context) {
+        int versionCode = -1;
         try {
             PackageManager manager = context.getPackageManager();
             PackageInfo info = manager.getPackageInfo(context.getPackageName(), 0);
-            v = info.versionCode;
-        } catch (NameNotFoundException e) {
-            // TODO Auto-generated catch block
+            versionCode = info.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-        return v;
+        return versionCode;
     }
 
 }

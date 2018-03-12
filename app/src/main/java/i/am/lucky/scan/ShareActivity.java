@@ -5,6 +5,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.zxing.client.android.clipboard.ClipboardInterface;
@@ -36,6 +37,10 @@ public class ShareActivity extends BaseShareActivity implements View.OnKeyListen
     EditText shareTextView;
     @BindView(R.id.btn_share_text)
     Button btnShareText;
+    @BindView(R.id.my_qrcode)
+    ImageView myQRCode;
+    @BindView(R.id.contents_text_view)
+    TextView contentsTextView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,6 +54,18 @@ public class ShareActivity extends BaseShareActivity implements View.OnKeyListen
     protected void onResume() {
         super.onResume();
         btnShareClipboard.setEnabled(ClipboardInterface.hasText(this));
+        if (contactsBitmap != null) {
+            myQRCode.setImageBitmap(contactsBitmap);
+        }
+        if (bookMarkBitmap != null) {
+            myQRCode.setImageBitmap(bookMarkBitmap);
+        }
+        if (appBitmap != null) {
+            myQRCode.setImageBitmap(appBitmap);
+        }
+        if (textContent != null && !textContent.isEmpty()){
+            contentsTextView.setText(textContent);
+        }
     }
 
     @OnClick(R.id.btn_share_app)
@@ -68,15 +85,23 @@ public class ShareActivity extends BaseShareActivity implements View.OnKeyListen
 
     @OnClick(R.id.btn_share_clipboard)
     public void onBtnShareClipboardClicked() {
-        shareClipboard();
+        // Should always be true, because we grey out the clipboard button in onResume() if it's empty
+        String text = String.valueOf(ClipboardInterface.getText(ShareActivity.this));
+        if (text.isEmpty()) {
+            return;
+        }
+        myQRCode.setImageBitmap(shareClipboard(text));
+        contentsTextView.setText(text);
     }
 
     @OnClick(R.id.btn_share_text)
     public void onBtnShareTextClicked() {
         String text = shareTextView.getText().toString();
-        if (!text.isEmpty()){
-            shareText(text);
+        if (text.isEmpty()) {
+            return;
         }
+        myQRCode.setImageBitmap(shareText(text));
+        contentsTextView.setText(text);
     }
 
     @Override
@@ -84,7 +109,8 @@ public class ShareActivity extends BaseShareActivity implements View.OnKeyListen
         if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
             String text = ((TextView) view).getText().toString();
             if (!text.isEmpty()) {
-                shareText(text);
+                myQRCode.setImageBitmap(shareText(text));
+                contentsTextView.setText(text);
             }
             return true;
         }
