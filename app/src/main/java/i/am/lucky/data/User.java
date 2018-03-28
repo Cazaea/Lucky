@@ -8,9 +8,10 @@ package i.am.lucky.data;
 
 public class User {
 
+    // 默认用户信息
     public static final String defaultInfo = "{\n" +
             "        \"id\": \"-1\",\n" +
-            "        \"account\": \"cazaea\",\n" +
+            "        \"account\": \"Cazaea\",\n" +
             "        \"nickname\": \"\",\n" +
             "        \"phone\": \"\",\n" +
             "        \"create_time\": \"\",\n" +
@@ -23,10 +24,11 @@ public class User {
             "        \"token\": \"-1\"\n" +
             "    }";
 
+    // 真实用户信息
     public String userInfo;
+    // 是否已经登录
+    public Boolean hasLogin;
 
-    public String hasLogin;
-
-    public String fromAccount;
+    public Boolean fromAccount;
 
 }

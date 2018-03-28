@@ -1,14 +1,13 @@
 package i.am.lucky.utils;
 
-import android.content.Context;
+import i.am.lucky.app.MainApp;
+import i.am.lucky.data.User;
 
 import org.json.JSONObject;
 
-import i.am.lucky.data.User;
-import xiaofei.library.datastorage.DataStorageFactory;
-import xiaofei.library.datastorage.IDataStorage;
-
 /**
+ * 登录判断工具类
+ *
  * @author Cazaea
  * @time 2017/11/1 16:59
  * @mail wistorm@sina.com
@@ -19,21 +18,20 @@ public class LoginUtil {
     /**
      * 判断是否已登录
      */
-    public static boolean isLogin(Context context) {
+    public static boolean isLogin() {
 
-        IDataStorage dataStorage = DataStorageFactory.getInstance(
-                context.getApplicationContext(), DataStorageFactory.TYPE_DATABASE);
-        User user = dataStorage.load(User.class, "User");
+        // 用户信息
+        User user = MainApp.getData().load(User.class, "User");
 
-        boolean isLogin = true;
+        boolean isLogin = false;
         try {
             JSONObject jo = new JSONObject(user.userInfo);
-            String user_id = jo.getString("id").toString().trim();
-            if (user_id.equals("-1")) {
-                isLogin = false;
+            String user_id = jo.getString("id").trim();
+            if (!user_id.equals("-1")) {
+                isLogin = true;
             }
         } catch (Exception e) {
-            isLogin = false;
+            e.printStackTrace();
         }
 
         return isLogin;

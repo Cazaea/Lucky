@@ -1,0 +1,28 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <!-- 隐藏标题栏 -->
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <!-- 定制主题颜色 -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <!-- 页面切换动画设定 -->
+        <item name="android:windowAnimationStyle">@style/AnimStyle</item>
+        <!-- 全局Toolbar样式 -->
+        <item name="toolbarStyle">@style/ToolbarStyle</item>
+        <item name="toolbarNavigationButtonStyle">@style/ToolbarBackStyle</item>
+
+    </style>
+
+    <!-- 自定义activity的进出场动画 -->
+    <style name="AnimStyle" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/slide_in_from_right</item>
+        <item name="android:activityOpenExitAnimation">@anim/slide_out_to_left</item>
+        <item name="android:activityCloseExitAnimation">@anim/slide_out_to_right</item>
+        <item name="android:activityCloseEnterAnimation">@anim/slide_in_from_left</item>
+    </style>
+
+</resources>

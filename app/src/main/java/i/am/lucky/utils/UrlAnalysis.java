@@ -1,12 +1,15 @@
 package i.am.lucky.utils;
 
 import java.util.LinkedHashMap;
+import java.util.Objects;
 
 /**
+ * 路由Url相关操作类
  * Created by Cazaea on 2017/7/7.
  */
 
 public class UrlAnalysis {
+
     /**
      * 解析出url请求的路径，包括页面
      *
@@ -83,7 +86,7 @@ public class UrlAnalysis {
                 mapRequest.put(arrSplitEqual[0], arrSplitEqual[1]);
 
             } else {
-                if (arrSplitEqual[0] != "") {
+                if (!Objects.equals(arrSplitEqual[0], "")) {
                     //只有参数没有值，不加入
                     mapRequest.put(arrSplitEqual[0], "");
                 }
@@ -92,17 +95,24 @@ public class UrlAnalysis {
         return mapRequest;
     }
 
+    /**
+     * 拼接Url链接部分和参数部分
+     *
+     * @param urlWithoutValue
+     * @param params
+     * @return
+     */
     public static String UrlMosaic(String urlWithoutValue, LinkedHashMap<String, String> params) {
-        String url = urlWithoutValue + "?";
+        StringBuilder url = new StringBuilder(urlWithoutValue + "?");
         boolean firstFlag = true;
         for (LinkedHashMap.Entry<String, String> entry : params.entrySet()) {
             if (firstFlag) {
-                url = url + entry.getKey() + "=" + entry.getValue();
+                url.append(entry.getKey()).append("=").append(entry.getValue());
                 firstFlag = false;
             } else {
-                url = url + "&" + entry.getKey() + "=" + entry.getValue();
+                url.append("&").append(entry.getKey()).append("=").append(entry.getValue());
             }
         }
-        return url;
+        return url.toString();
     }
 }

@@ -395,12 +395,9 @@ public class CheckUtil {
      */
     @SuppressWarnings("static-access")
     public static void main(String[] args) throws ParseException {
-        // String IDCardNum="210102820826411";
-        // String IDCardNum="210102198208264114";
         String IDCardNum = "210181198807193116";
         CheckUtil cu = new CheckUtil();
         Log.d(TAG, "校验身份证号==> " + cu.checkIDCard(IDCardNum));
-        // System.out.println(cc.isDate("1996-02-29"));
     }
     /*********************************** 身份证验证结束 ****************************************/
 

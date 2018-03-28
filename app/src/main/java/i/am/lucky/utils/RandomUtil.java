@@ -1,6 +1,8 @@
 package i.am.lucky.utils;
 
 /**
+ * 随机数相关工具
+ *
  * @author Cazaea
  * @time 2017/11/28 10:40
  * @mail wistorm@sina.com

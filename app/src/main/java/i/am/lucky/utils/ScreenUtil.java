@@ -9,12 +9,13 @@ import android.view.View;
 import android.view.WindowManager;
 
 /**
+ * 获得屏幕相关的辅助类
+ *
  * @author Cazaea
  * @time 2018/3/9 10:46
  * @mail wistorm@sina.com
  */
 
-//获得屏幕相关的辅助类
 public class ScreenUtil {
     private ScreenUtil() {
         /* cannot be instantiated */

@@ -8,7 +8,6 @@ import com.cazaea.recycler.CommonViewHolder;
 import com.cazaea.recycler.RecyclerViewCommonAdapter;
 import com.squareup.picasso.Picasso;
 
-
 import java.util.ArrayList;
 import java.util.List;
 

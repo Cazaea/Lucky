@@ -1,40 +1,81 @@
 <resources>
 
-    <!--&lt;!&ndash; Base application theme. &ndash;&gt;-->
-    <!--<style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">-->
-    <!--&lt;!&ndash; Customize your theme here. &ndash;&gt;-->
-    <!--<item name="colorPrimary">@color/colorPrimary</item>-->
-    <!--<item name="colorPrimaryDark">@color/colorPrimaryDark</item>-->
-    <!--<item name="colorAccent">@color/colorAccent</item>-->
-    <!--</style>-->
-
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
         <!-- 隐藏标题栏 -->
+        <item name="windowNoTitle">true</item>
         <item name="android:windowNoTitle">true</item>
-        <!-- Customize your theme here. -->
+        <!-- 定制主题 -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <!-- 解决全屏跳转非全屏屏幕闪动问题,Android8.0中,与进出场动画不兼容，故values-v26中单独适配 -->
+        <item name="android:windowIsTranslucent">true</item>
+        <!-- 页面切换动画设定 -->
+        <item name="android:windowAnimationStyle">@style/AnimStyle</item>
+        <!-- 全局Toolbar样式 -->
+        <item name="toolbarStyle">@style/ToolbarStyle</item>
+        <item name="toolbarNavigationButtonStyle">@style/ToolbarBackStyle</item>
+
+    </style>
+
+    <!-- Title样式 -->
+    <style name="TitleStyle">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+
+    <!-- 页面跳转无动画效果 -->
+    <style name="NoAnimStyle" parent="@android:style/Animation.Translucent">
+        <item name="android:activityOpenEnterAnimation">@null</item>
+        <item name="android:activityOpenExitAnimation">@null</item>
+        <item name="android:activityCloseEnterAnimation">@null</item>
+        <item name="android:activityCloseExitAnimation">@null</item>
+        <item name="android:taskOpenEnterAnimation">@null</item>
+        <item name="android:taskOpenExitAnimation">@null</item>
+        <item name="android:taskCloseEnterAnimation">@null</item>
+        <item name="android:taskCloseExitAnimation">@null</item>
+        <item name="android:taskToFrontEnterAnimation">@null</item>
+        <item name="android:taskToFrontExitAnimation">@null</item>
+        <item name="android:taskToBackEnterAnimation">@null</item>
+        <item name="android:taskToBackExitAnimation">@null</item>
+    </style>
+
+    <!-- 自定义activity的进出场动画 -->
+    <style name="AnimStyle" parent="@android:style/Animation.Translucent">
+        <item name="android:activityOpenEnterAnimation">@anim/slide_in_from_right</item>
+        <item name="android:activityOpenExitAnimation">@anim/slide_out_to_left</item>
+        <item name="android:activityCloseExitAnimation">@anim/slide_out_to_right</item>
+        <item name="android:activityCloseEnterAnimation">@anim/slide_in_from_left</item>
+    </style>
+
+    <!-- Toolbar返回键图标样式 -->
+    <style name="ToolbarBackStyle" parent="@style/Widget.AppCompat.Toolbar.Button.Navigation">
+        <item name="android:minWidth">0dp</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:scaleType">centerInside</item>
+    </style>
+
+    <!-- ToolBar样式 -->
+    <style name="ToolbarStyle" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="colorControlNormal">@color/colorWhite</item>
+        <item name="android:actionMenuTextColor">@color/colorWhite</item>
+        <item name="android:actionBarSize">46dp</item>
     </style>
 
     <!-- Activity全屏 -->
-    <style name="FullScreen" parent="AppTheme">
+    <style name="FullScreenTheme" parent="AppTheme">
         <item name="android:windowFullscreen">true</item>
-        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowAnimationStyle">@style/NoAnimStyle</item>
     </style>
 
     <!-- 加载框样式 -->
-    <style name="LoadingDialog" parent="Theme.AppCompat.Dialog">
+    <style name="LoadingDialogStyle" parent="@style/Theme.AppCompat.Dialog">
         <item name="android:backgroundDimEnabled">false</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="colorAccent">@color/colorWhite</item>
-    </style>
-
-    <!--  -->
-    <style name="TextAppearance.Small" parent="TextAppearance.AppCompat">
-        <item name="android:textSize">18sp</item>
-        <item name="android:textColor">@android:color/white</item>
     </style>
 
 </resources>

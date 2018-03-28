@@ -1,103 +1,55 @@
-// 说明module的类型，com.android.application为程序，com.android.library为库
 apply plugin: 'com.android.application'
-
-// 应用名称
-static def ApkName() {
-    return "Lucky"
-}
-
-// 打包日期(当前时间是UTC时区，以20171010格式化时间输出)
-static def BuildTime() {
-    return new Date().format("yyyyMMdd", TimeZone.getTimeZone("UTC"))
-}
-
-// 编码格式
-tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
-}
 
 android {
 
-    compileSdkVersion 27 // 编译的SDK版本
-    buildToolsVersion "27.0.3" // buildTools版本
+    compileSdkVersion rootProject.compileSdkVersion
+    buildToolsVersion rootProject.buildToolsVersion
     // 默认配置
     defaultConfig {
-        applicationId "i.am.lucky" // 应用程序的包名
-        minSdkVersion 19 // 支持的最低版本
-        targetSdkVersion 27 // 支持的目标版本
-        versionCode 1 // 版本号
-        versionName "1.0" // 版本名
+        applicationId "i.am.lucky"
+        minSdkVersion rootProject.minSdkVersion
+        targetSdkVersion rootProject.targetSdkVersion
+        versionCode 1
+        versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        // 资源文件支持多语言
+        resConfigs "fa", "fr", "ja", "ko", "ru", "zh-rCN", "zh-rTW"
         // dex突破65535的限制
         multiDexEnabled true
-        // 该应用支持运行在以下CPU型号手机上
         ndk {
-            //选择要添加的对应cpu类型的.so库。
-            abiFilters 'armeabi', 'armeabi-v7a', 'arm64-v8a'
-            // 还可以添加 'x86', 'x86_64', 'mips', 'mips64'
+            abiFilters 'armeabi', 'armeabi-v7a', 'arm64-v8a', 'x86'
+            // 还可以添加 , 'x86', 'x86_64', 'mips', 'mips64'
         }
         // 信鸽ID, KEY
         manifestPlaceholders = [
                 XG_ACCESS_ID : "2100270821",
                 XG_ACCESS_KEY: "A4PD641M6ADN",
         ]
-    }
 
-    // 签名配置
-    signingConfigs {
-        release {
-            storeFile file("../key.jks")
-            keyAlias "android"
-            keyPassword "android"
-            storePassword "android"
+        // 设置项目文件夹
+        sourceSets {
+            main.java.srcDirs += 'src/main/java'
         }
-        debug {
-            // No debug config
-        }
-    }
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
     }
 
     buildTypes {
-        debug {
-            // 显示Log
-            buildConfigField("boolean", "LOG_DEBUG", "true")
-            // 设置后缀
-            versionNameSuffix "_debug"
-            minifyEnabled false
-            shrinkResources false
-            zipAlignEnabled false
-            signingConfig signingConfigs.debug
-        }
         release {
-            // 不显示Log
-            buildConfigField("boolean", "LOG_DEBUG", "false")
-            // 混淆
-            minifyEnabled true
-            // Zipalign优化
-            zipAlignEnabled true
-            // 移除无用的resource文件
-            shrinkResources true
-            // 前一部分代表系统默认的android程序的混淆文件，该文件已经包含了基本的混淆声明，后一个文件是自己的定义混淆文件
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
         }
-    }
 
-    // 修改打包不能成功配置
-    lintOptions {
-        checkReleaseBuilds false
-        abortOnError false // lint时候终止错误上报,防止编译的时候莫名的失败
+        debug {
+            // 生成双版本应用（测试版，正式版同时安装）
+            applicationIdSuffix ".debug"
+            jniDebuggable true
+        }
     }
 
     // 自定义应用输出名称
     applicationVariants.all { variant ->
         variant.outputs.all {
             outputFileName = "${ApkName()}_${variant.versionName}_${BuildTime()}.apk"
-            /*_${variant.productFlavors[0].name}*/
         }
     }
 
@@ -119,46 +71,91 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.1'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    testImplementation "junit:junit:$junitVersion"
+    androidTestImplementation "com.android.support.test:runner:$androidTestVersion"
+    androidTestImplementation "com.android.support.test.espresso:espresso-core:$androidEspressoVersion"
 
-    // 类Google左滑菜单
-    implementation('com.mikepenz:materialdrawer:6.0.2@aar') {
-        transitive = true
-    }
+    //    // 类Google左滑菜单
+
+    //    implementation('com.mikepenz:materialdrawer:6.0.2@aar') {
+
+    //        transitive = true
+
+    //    }
+
+    // Dagger2
+    implementation 'com.google.dagger:dagger:2.14.1'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.14.1'
 
     // Android支持
-    implementation 'com.android.support:support-v4:27.1.0'
-    implementation 'com.android.support:support-v13:27.1.0'
-    implementation 'com.android.support:support-annotations:27.1.0'
-    implementation 'com.android.support:appcompat-v7:27.1.0'
-    implementation 'com.android.support:design:27.1.0'
-    implementation 'com.android.support:cardview-v7:27.1.0'
-
-    // RecycleView
-    implementation 'com.android.support:recyclerview-v7:27.1.0'
-
-    // 信鸽稳定版
-    implementation 'com.tencent.xinge:xinge:3.1.81-alpha'
-
-    // wup包
-    implementation 'com.tencent.wup:wup:1.0.0.E-alpha'
-
-    // mid包
-    implementation 'com.tencent.mid:mid:3.721-alpha'
+    implementation "com.android.support:support-v4:$supportLibraryVersion"
+    implementation "com.android.support:support-v13:$supportLibraryVersion"
+    implementation "com.android.support:support-annotations:$supportLibraryVersion"
+    implementation "com.android.support:appcompat-v7:$supportLibraryVersion"
+    implementation "com.android.support:design:$supportLibraryVersion"
+    implementation "com.android.support:cardview-v7:$supportLibraryVersion"
 
     // 牛油刀注解
-    implementation 'com.jakewharton:butterknife:8.8.1'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+    implementation "com.jakewharton:butterknife:$butterKnifeVersion"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$butterKnifeVersion"
+
+    // Kotlin
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
 
     // 图片加载
-    implementation 'com.github.bumptech.glide:glide:4.6.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.2.0'
+    implementation "com.squareup.picasso:picasso:$picassoVersion"
 
-    // Picasso
-    implementation 'com.squareup.picasso:picasso:2.5.2'
+    // 网络封装
+    implementation "com.squareup.okhttp3:okhttp:$okhttpVersion"
+
+    // Android缓存
+    implementation "xiaofei.library:android-data-storage:$dataStorageVersion"
+
+    // EventBus,事件总线
+    implementation "org.greenrobot:eventbus:$eventBusVersion"
+
+    // 简易Log打印
+    implementation "com.orhanobut:logger:$loggerVersion"
+
+    // 导航页轮播图
+    implementation "cn.bingoogolapple:bga-banner:$bannerVersion"
+
+    // 圆形头像
+    implementation "com.makeramen:roundedimageview:$roundImageVersion"
+
+    // 酷炫弹框
+    implementation "com.github.cazaea:SweetAlertDialog:$dialogVersion"
+
+    // 二维码扫描
+    implementation 'com.github.cazaea:ScanCode:1.1.2'
+
+    // 自定义RecyclerView
+    implementation 'com.github.cazaea:RecyclerView:1.0.0'
+
+    // xml转换工具
+    implementation "org.dom4j:dom4j:$xmlTransVersion"
+
+    // Multidex
+    implementation "com.android.support:multidex:$multidexVersion"
+
+    // 广告弹框工具
+    implementation "cn.yipianfengye.android:ad-library:$adDialogVersion"
+
+    // 权限检查工具
+    implementation "com.yanzhenjie:permission:$checkAndGetPermissionVersion"
+
+    // ActivityRouter,路由工具
+    implementation "com.github.joyrun.ActivityRouter:router:$routerVersion"
+    annotationProcessor "com.github.joyrun.ActivityRouter:router-compiler:$routerVersion"
+
+    // 信鸽jar
+    implementation 'com.tencent.xinge:xinge:3.2.2-release'
+
+    // wup包
+    implementation 'com.tencent.wup:wup:1.0.0.E-release'
+
+    // mid包
+    implementation 'com.tencent.mid:mid:4.0.6-release'
 
     // 图片选择器
     implementation 'com.lzy.widget:imagepicker:0.6.1'
@@ -167,38 +164,10 @@ dependencies {
     implementation 'com.shuyu:GSYVideoPlayer:2.1.2'
 
     // 视频录制相关
-    implementation 'com.afollestad:material-camera:0.4.4'
-
-    // 路由相关
-    implementation 'com.github.joyrun.ActivityRouter:router:0.6.2'
-    annotationProcessor 'com.github.joyrun.ActivityRouter:router-compiler:0.6.2'
-
-    // OKHttp,网络封装
-    implementation 'com.squareup.okhttp3:okhttp:3.9.1'
-
-    // AndroidDataStorage,Android缓存
-    implementation 'xiaofei.library:android-data-storage:1.3.0'
-
-    // EventBus,事件总线
-    implementation 'org.greenrobot:eventbus:3.1.0-RC'
-
-    // 酷炫弹框
-    implementation 'com.github.cazaea:SweetAlertDialog:1.0.0'
-
-    // Guide页面轮播图
-    implementation 'cn.bingoogolapple:bga-banner:2.2.4'
-
-    // xml转换工具
-    implementation 'org.dom4j:dom4j:2.0.0'
-
-    // RecyclerView适配器
-    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
+//    implementation 'cjt.library.wheel:camera:1.1.9'
 
     // 柱状图，折线图
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.2'
-
-    // 简易Log打印
-    implementation 'com.orhanobut:logger:2.1.1'
 
     // 快捷json转对象
     implementation 'com.google.code.gson:gson:2.8.2'
@@ -206,15 +175,27 @@ dependencies {
     // 快捷网络加载
     implementation 'com.lzy.net:okgo:2.1.4'
 
-    // 二维码扫描
-    implementation 'com.github.cazaea:ScanCode:1.1.2'
+    // 腾讯TBS
+    implementation files('libs/tbs_sdk_v3.6._20180211.jar')
 
-    // RoundImageView
-    implementation 'com.makeramen:roundedimageview:2.2.1'
-    implementation project(':recycler')
+    // Bugly
+    implementation 'com.tencent.bugly:crashreport_upgrade:1.3.4'
+    implementation 'com.tencent.bugly:nativecrashreport:3.3.1'
 
+    implementation project(':camera')
 }
 
-repositories {
-    mavenCentral()
+// 应用名称
+static def ApkName() {
+    return "Lucky"
+}
+
+// 打包日期(当前时间是UTC时区，以20171010格式化时间输出)
+static def BuildTime() {
+    return new Date().format("yyyyMMdd", TimeZone.getTimeZone("UTC"))
+}
+
+// 编码格式
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
 }

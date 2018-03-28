@@ -1,6 +1,5 @@
 package i.am.lucky.utils;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -14,37 +13,37 @@ import i.am.lucky.app.MainApp;
 
 public class PreferUtil {
 
-    private static SharedPreferences pref;
+    private Context context;
+
+    private static SharedPreferences prefer;
     private static SharedPreferences.Editor editor;
 
     // SharedPreferences 文件名
-    private static final String PREF_NAME = "intro_slider";
-
-    private static final String IS_FIRST_LAUNCH = "IsFirstTimeLaunch";
-
-    public PreferUtil(Context context) {
-        pref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        editor = pref.edit();
-    }
+    private static final String PREFER_FILE_NAME = "lease_data";
+    // 最新版本信息
+    private static final String LEAST_VERSION_CODE = "LEAST_VERSION_CODE";
 
     /**
-     * 设置已启动
+     * PreferUtil构造器
      *
-     * @param isFirstTime
+     * @param context
      */
-    public void setFirstLaunch(boolean isFirstTime) {
-        editor.putBoolean(IS_FIRST_LAUNCH, isFirstTime);
-        editor.commit();
+    public PreferUtil(Context context) {
+        this.context = context;
+        prefer = context.getSharedPreferences(PREFER_FILE_NAME, Context.MODE_PRIVATE);
+        editor = prefer.edit();
+        editor.apply();
     }
 
     /**
-     * @return 是否第一次启动
+     * 获取PreferUtil实例
+     *
+     * @param context
+     * @return
      */
-    public boolean isFirstLaunch() {
-        return pref.getBoolean(IS_FIRST_LAUNCH, true);
+    public static PreferUtil getInstance(Context context) {
+        return new PreferUtil(context);
     }
-
-    // 以下方法为老方法
 
     /**
      * 向sharePreferences文件中放入String类型的数据
@@ -62,7 +61,7 @@ public class PreferUtil {
      * @return key所对应value值
      */
     public static String getString(String key) {
-        return pref.getString(key, null);
+        return prefer.getString(key, null);
     }
 
     /**
@@ -81,42 +80,23 @@ public class PreferUtil {
      * @return key所对应value值
      */
     public static int getInt(String key) {
-        return pref.getInt(key, -1);
-    }
-
-    /**
-     * 向sharePreferences文件中放入boolean类型的数据
-     *
-     * @param key   数据的key值
-     * @param value 数据
-     */
-    public static void putBoolean(String key, boolean value) {
-        editor.putBoolean(key, value).commit();
-    }
-
-    /**
-     * 获取boolean类型消息内容
-     *
-     * @return key所对应value值
-     */
-    public static boolean getBoolean(String key) {
-        return pref.getBoolean(key, false);
+        return prefer.getInt(key, -1);
     }
 
     /**
      * 获取存入的versionCode
      *
-     * @return
+     * @return 上次启动，存入的VersionCode
      */
     public int getSavedVersionCode() {
-        return getInt("least_version_code");
+        return getInt(LEAST_VERSION_CODE);
     }
 
     /**
      * 存入最新的versionCode
      */
     public void putLeastVersionCode() {
-        putInt("least_version_code", MainApp.versionCode());
+        putInt(LEAST_VERSION_CODE, VersionUtil.getVersionCode(context));
     }
 
 }

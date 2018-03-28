@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_title_bar_view"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:background="@color/colorPrimary"
+    android:visibility="visible">
+
+    <!--title-->
+    <TextView
+        android:id="@+id/tv_main_bar_title"
+        style="@style/TitleStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="60dp"
+        android:layout_marginRight="60dp" />
+
+    <!--返回按钮-->
+    <Button
+        android:id="@+id/btn_main_bar_back"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@null"
+        android:drawableStart="@drawable/icon_white_left_arrow"
+        android:gravity="center"
+        android:layout_marginStart="10dp"
+        android:visibility="invisible" />
+
+    <!--搜索-->
+    <Button
+        android:id="@+id/btn_main_bar_search"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="10dp"
+        android:visibility="invisible" />
+
+    <!--动态 -->
+    <Button
+        android:id="@+id/btn_main_bar_dynamic"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="10dp"
+        android:visibility="invisible" />
+
+    <Button
+        android:id="@+id/btn_main_bar_push"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="10dp"
+        android:text="发布"
+        android:textColor="@color/colorWhite"
+        android:background="@null"
+        android:textSize="16sp"
+        android:visibility="invisible" />
+
+    <Button
+        android:id="@+id/btn_main_bar_detail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="10dp"
+        android:text="明细"
+        android:textColor="@color/colorWhite"
+        android:visibility="gone"
+        android:background="@null"
+        android:textSize="20sp"
+        />
+    <TextView
+        android:id="@+id/tv_main_bar_share"
+        style="@style/TitleStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="10dp"
+        android:text="分享"
+        android:visibility="gone"
+        />
+
+</RelativeLayout>

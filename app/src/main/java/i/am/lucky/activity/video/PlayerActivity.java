@@ -3,15 +3,11 @@ package i.am.lucky.activity.video;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -42,6 +38,31 @@ import i.am.lucky.data.Bean.MovieDetail;
 import i.am.lucky.utils.video.GridMarginDecoration;
 import okhttp3.Call;
 import okhttp3.Response;
+
+/*
+ *           _____                    _____                    _____                    _____
+ *          /\    \                  /\    \                  /\    \                  /\    \
+ *         /::\____\                /::\    \                /::\    \                /::\    \
+ *        /:::/    /                \:::\    \              /::::\    \              /::::\    \
+ *       /:::/    /                  \:::\    \            /::::::\    \            /::::::\    \
+ *      /:::/    /                    \:::\    \          /:::/\:::\    \          /:::/\:::\    \
+ *     /:::/____/                      \:::\    \        /:::/__\:::\    \        /:::/__\:::\    \
+ *    /::::\    \                      /::::\    \      /::::\   \:::\    \      /::::\   \:::\    \
+ *   /::::::\    \   _____    ____    /::::::\    \    /::::::\   \:::\    \    /::::::\   \:::\    \
+ *  /:::/\:::\    \ /\    \  /\   \  /:::/\:::\    \  /:::/\:::\   \:::\____\  /:::/\:::\   \:::\    \
+ * /:::/  \:::\    /::\____\/::\   \/:::/  \:::\____\/:::/  \:::\   \:::|    |/:::/__\:::\   \:::\____\
+ * \::/    \:::\  /:::/    /\:::\  /:::/    \::/    /\::/   |::::\  /:::|____|\:::\   \:::\   \::/    /
+ *  \/____/ \:::\/:::/    /  \:::\/:::/    / \/____/  \/____|:::::\/:::/    /  \:::\   \:::\   \/____/
+ *           \::::::/    /    \::::::/    /                 |:::::::::/    /    \:::\   \:::\    \
+ *            \::::/    /      \::::/____/                  |::|\::::/    /      \:::\   \:::\____\
+ *            /:::/    /        \:::\    \                  |::| \::/____/        \:::\   \::/    /
+ *           /:::/    /          \:::\    \                 |::|  ~|               \:::\   \/____/
+ *          /:::/    /            \:::\    \                |::|   |                \:::\    \
+ *         /:::/    /              \:::\____\               \::|   |                 \:::\____\
+ *         \::/    /                \::/    /                \:|   |                  \::/    /
+ *          \/____/                  \/____/                  \|___|                   \/____/
+ *
+ */
 
 @RouterActivity("player")
 public class PlayerActivity extends AppCompatActivity {
@@ -323,10 +344,11 @@ public class PlayerActivity extends AppCompatActivity {
                     Picasso.with(mContext).load(castsBean.getAvatars().getLarge()).placeholder(android.R.color.white).into(castImageView);
                     //holder.loadImageUrl(mContext, R.id.iv_cast_image, castsBean.getAvatars().getLarge());
                 } else {
-                    holder.setImageRes(R.id.iv_cast_image, R.drawable.default_large);
+                    holder.setImageRes(R.id.iv_cast_image, R.drawable.image_default);
                 }
 
                 holder.setText(R.id.tv_cast_name, castsBean.getName());
+
 //                holder.itemView.setOnClickListener(new View.OnClickListener() {
 //                    @Override
 //                    public void onClick(View v) {
@@ -365,7 +387,7 @@ public class PlayerActivity extends AppCompatActivity {
         //增加封面
         ImageView imageView = new ImageView(this);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        imageView.setImageResource(R.drawable.img_ask);
+        imageView.setImageResource(R.drawable.image_ask);
         videoPlayer.setThumbImageView(imageView);
         //外部辅助的旋转，帮助全屏
         //orientationUtils = new OrientationUtils(this, videoPlayer);

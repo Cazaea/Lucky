@@ -2,6 +2,15 @@ package i.am.lucky.http;
 
 import android.content.Context;
 
+import i.am.lucky.app.MainApp;
+import i.am.lucky.config.AppConfig;
+import i.am.lucky.config.EventConfig;
+import i.am.lucky.data.User;
+import i.am.lucky.utils.DeviceUtil;
+import i.am.lucky.utils.LogUtil;
+import i.am.lucky.utils.ParamUtil;
+import com.tencent.android.tpush.XGPushManager;
+
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,11 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import i.am.lucky.config.AppConfig;
-import i.am.lucky.config.EventConfig;
-import i.am.lucky.data.User;
-import i.am.lucky.utils.DeviceUtil;
-import i.am.lucky.utils.ParamUtil;
 import okhttp3.Cache;
 import okhttp3.CacheControl;
 import okhttp3.FormBody;
@@ -32,7 +36,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import xiaofei.library.datastorage.DataStorageFactory;
 import xiaofei.library.datastorage.IDataStorage;
 
 /**
@@ -60,24 +63,23 @@ public class HttpUtil {
      * @param params        请求参数
      * @param cache_type    缓存类型(TYPE_FORCE_CACHE,TYPE_FORCE_NETWORK,TYPE_CACHE_CONTROL),如果为TYPE_CACHE_CONTROL 需要填写缓存时间
      * @param cache_seconds 缓存时间，单位秒
-     * @return 返回对象数组 obj[0]:bool,成功、失败；obj[1]:String,提示信息；obj[2]：JSONObject/null，返回数据
+     * @return 返回对象数组 obj[0]:bool,成功、失败；obj[1]:String,提示信息；obj[2]：JSONObject/null。
+     * 注意：==> 如果状态不成功，obj[2]：返回状态码
      */
     public static Object[] postHttp(Context context, String url, HashMap<String, String> params, String cache_type, int cache_seconds) {
-        //参数中添加平台信息、版本号、设备编号
-        params = addInfo(context, params);
-        try {
-            params.put("sign", getSignature(params, "1qaz2wsx"));
-        } catch (IOException e) {
 
-        }
+        // 参数中添加平台信息、版本号、设备编号、鉴权参数
+        addInfo(context, params);
+
         try {
-            //缓存文件夹
-            File cacheFile = new File(context.getExternalCacheDir().toString(), "cache");
-            //缓存大小为50M
+            // 缓存文件夹
+            File cacheFile = new File(String.valueOf(context.getExternalCacheDir()), "cache");
+            // 缓存大小为50M
             int cacheSize = 50 * 1024 * 1024;
-            //创建缓存对象
+            // 创建缓存对象
             final Cache cache = new Cache(cacheFile, cacheSize);
 
+            // 创建网络连接
             OkHttpClient mOkHttpClient = new OkHttpClient.Builder()
                     .connectTimeout(10, TimeUnit.SECONDS)
                     .readTimeout(20, TimeUnit.SECONDS)
@@ -89,17 +91,23 @@ public class HttpUtil {
                 formBodyBuilder.add(entry.getKey(), entry.getValue());
             RequestBody formBody = formBodyBuilder.build();
 
-            CacheControl cacheControl = null;
-            if (cache_type.equals(TYPE_CACHE_CONTROL)) {
-                cacheControl = new CacheControl.Builder()
-                        .maxAge(cache_seconds, TimeUnit.SECONDS)
-                        .build();
-            }
-            if (cache_type.equals(TYPE_FORCE_CACHE)) {
-                cacheControl = FORCE_CACHE;
-            }
-            if (cache_type.equals(TYPE_FORCE_NETWORK)) {
-                cacheControl = FORCE_NETWORK;
+            CacheControl cacheControl;
+            switch (cache_type) {
+                case TYPE_CACHE_CONTROL:
+                    cacheControl = new CacheControl.Builder()
+                            .maxAge(cache_seconds, TimeUnit.SECONDS)
+                            .build();
+                    break;
+                case TYPE_FORCE_CACHE:
+                    cacheControl = FORCE_CACHE;
+                    break;
+                case TYPE_FORCE_NETWORK:
+                    cacheControl = FORCE_NETWORK;
+                    break;
+                default:
+                    cacheControl = FORCE_NETWORK;
+                    break;
+
             }
 
             Request request = new Request.Builder()
@@ -108,27 +116,32 @@ public class HttpUtil {
                     .post(formBody)
                     .build();
             Response response = mOkHttpClient.newCall(request).execute();
-            String result = response.body().string();
+
+            String result = String.valueOf(response.body());
             JSONObject jo = new JSONObject(result);
-            if (jo.getInt("code") == 1000) {
+            int status_code = jo.getInt("code");
+            if (status_code == 1000) {
                 return new Object[]{true, jo.getString("msg"), jo.isNull("data") ? new JSONObject() : jo.get("data")};
             } else {
-                if (jo.getInt("code") == 1102) {
-                    IDataStorage dataStorage = DataStorageFactory.getInstance(
-                            context.getApplicationContext(), DataStorageFactory.TYPE_DATABASE);
+                // 每次启动应用调用接口都判断一次登录状态是否过期
+                if (status_code == 1102) {
+                    IDataStorage dataStorage = MainApp.getData();
                     User user = dataStorage.load(User.class, "User");
+                    // 每次请求接口激活一次，信鸽推送注册
                     if (AppConfig.XG_PUSH_MODE) {
-//                        XGPushManager.registerPush(context.getApplicationContext(), "*");
+                        XGPushManager.registerPush(context.getApplicationContext(), "*");
                     }
                     // 将用户数据设置为默认数
                     user.userInfo = User.defaultInfo;
-                    user.fromAccount = "true";
-                    user.hasLogin = "false";
+                    user.fromAccount = true;
+                    user.hasLogin = false;
                     dataStorage.storeOrUpdate(user, "User");
+                    // 每次启动应用调用接口都判断一次登录状态是否过期
                     EventBus.getDefault().post(EventConfig.EVENT_LOGOUT);
-                    return new Object[]{false, "用户不存在，请重新登录", null};
+                    return new Object[]{false, "用户不存在，请重新登录", status_code};
                 }
-                return new Object[]{false, jo.getString("msg"), null, jo.getInt("code")};
+                // 如果接口请求不成功，将obj[2]放入错误code返回
+                return new Object[]{false, jo.getString("msg"), status_code};
             }
         } catch (Exception e) {
             if (e instanceof JSONException) {
@@ -149,16 +162,11 @@ public class HttpUtil {
      * @return 返回对象数组 obj[0]:bool,成功、失败；obj[1]:String,提示信息；obj[2]：JSONObject/null，返回数据
      */
     public static Object[] postHttpJPG(Context context, String url, HashMap<String, String> params, HashMap<String, File> image) {
-        //参数中添加平台信息、版本号、设备编号
-        params = addInfo(context, params);
-        try {
-            params.put("sign", getSignature(params, "1qaz2wsx"));
-        } catch (IOException e) {
 
-        }
+        //参数中添加平台信息、版本号、设备编号、鉴权参数
+        addInfo(context, params);
 
         try {
-            //params.put("sign", getSignature(params, "1qaz2wsx"));
             OkHttpClient mOkHttpClient = new OkHttpClient.Builder()
                     .connectTimeout(10, TimeUnit.SECONDS)
                     .readTimeout(20, TimeUnit.SECONDS)
@@ -178,13 +186,11 @@ public class HttpUtil {
                     .post(requestBody)
                     .build();
             Response response = mOkHttpClient.newCall(request).execute();
-            String result = response.body().string();
+            String result = String.valueOf(response.body());
             JSONObject jo = new JSONObject(result);
-            if (jo.getInt("code") == 1000) {
-                return new Object[]{true, jo.getString("msg"), jo.get("data")};
-            } else {
-                return new Object[]{false, jo.getString("msg"), jo.get("data")};
-            }
+            // 状态码为1000时，接口跑通，否则接口请求异常
+            boolean status = (jo.getInt("code") == 1000);
+            return new Object[]{status, jo.getString("msg"), jo.get("data")};
         } catch (Exception e) {
             if (e instanceof JSONException) {
                 return new Object[]{false, "JSON解析失败", null};
@@ -197,20 +203,24 @@ public class HttpUtil {
     }
 
     /**
-     * 参数中添加平台信息、版本号、设备编号
+     * 参数中添加平台信息、版本号、设备编号、鉴权参数
      *
      * @param context
      * @param params
-     * @return
      */
-    public static HashMap<String, String> addInfo(Context context, HashMap<String, String> params) {
+    private static void addInfo(Context context, HashMap<String, String> params) {
         // 添加平台信息
         params.put("platform", "Android");
         // 添加版本号
-        params.put("version", ParamUtil.getVersionCode(context));
+        params.put("version", ParamUtil.getVersionCodeParam(context));
         // 添加设备编号
         params.put("device_uid", DeviceUtil.getUniqueId(context));
-        return params;
+        // 添加鉴权参数
+        try {
+            params.put("sign", getSignature(params));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -218,32 +228,29 @@ public class HttpUtil {
      * 1qaz2wsx
      *
      * @param postPairs
-     * @param secret
      * @return
      * @throws IOException
      */
-    public static String getSignature(HashMap<String, String> postPairs,
-                                      String secret) throws IOException {
+    private static String getSignature(HashMap<String, String> postPairs) throws IOException {
+
         StringBuilder baseString = new StringBuilder();
         List<Map.Entry<String, String>> list = new ArrayList<Map.Entry<String, String>>(postPairs.entrySet());
         Collections.sort(list, new Comparator<Map.Entry<String, String>>() {
-            //升序排序
-            public int compare(Map.Entry<String, String> o1,
-                               Map.Entry<String, String> o2) {
+            // 升序排序
+            public int compare(Map.Entry<String, String> o1, Map.Entry<String, String> o2) {
                 return o1.getKey().compareTo(o2.getKey());
             }
 
         });
 
         for (Map.Entry<String, String> mapping : list) {
-            System.out.println(mapping.getKey() + ":" + mapping.getValue());
-
-            baseString.append(mapping.getKey()).append("=")
-                    .append(mapping.getValue());
+            baseString.append(mapping.getKey()).append("=").append(mapping.getValue());
+            // 查看传入参数信息
+            LogUtil.d(mapping.getKey() + ":-->" + mapping.getValue());
         }
-        baseString.append(secret);
+        baseString.append("1qaz2wsx");
 
-        byte[] bytes = null;
+        byte[] bytes;
         try {
             MessageDigest md5 = MessageDigest.getInstance("MD5");
             bytes = md5.digest(baseString.toString().getBytes("UTF-8"));
@@ -252,8 +259,8 @@ public class HttpUtil {
         }
 
         StringBuilder sign = new StringBuilder();
-        for (int i = 0; i < bytes.length; i++) {
-            String hex = Integer.toHexString(bytes[i] & 0xFF);
+        for (byte aByte : bytes) {
+            String hex = Integer.toHexString(aByte & 0xFF);
             if (hex.length() == 1) {
                 sign.append("0");
             }

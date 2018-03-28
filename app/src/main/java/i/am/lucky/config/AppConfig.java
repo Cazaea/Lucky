@@ -13,14 +13,17 @@ public class AppConfig {
     /**
      * Open or Close
      */
-    public static final boolean DEBUG_MODE = false;
-    public static final boolean XG_PUSH_MODE = false;
+    public static final boolean DEBUG_MODE = true;
+    public static final boolean XG_PUSH_MODE = true;
 
     /**
      * Constants
      */
-    // 路由根目录
     public static final String ROUTER_HEAD = "cazaea";
+    public static final String ROUTER_TOTAL_HEAD = "cazaea://";
     public static final String ROUTER_WEBSITE = "www.cazaea.com";
+
+    public static final String PROVIDER_FILE_NAME = "${applicationId}.fileProvider";
+
 
 }

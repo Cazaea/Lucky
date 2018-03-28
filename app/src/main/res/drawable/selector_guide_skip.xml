@@ -2,14 +2,14 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_pressed="true">
         <shape android:shape="rectangle">
-            <solid android:color="@color/colorSkyBlue" />
+            <solid android:color="@color/colorHalfTransparent" />
             <corners android:radius="3dp" />
         </shape>
     </item>
     <item android:state_checked="true">
         <shape android:shape="rectangle">
-            <solid android:color="@color/transparent" />
-            <stroke android:color="@color/colorWhite" android:width="1px"/>
+            <solid android:color="@color/colorTransparent" />
+            <stroke android:width="1px" android:color="@color/colorWhite" />
             <corners android:radius="3dp" />
         </shape>
     </item>
