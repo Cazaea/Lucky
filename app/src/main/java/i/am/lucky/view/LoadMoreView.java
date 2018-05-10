@@ -14,7 +14,7 @@ import i.am.lucky.R;
  * @time 2018/3/22 9:48
  * @mail wistorm@sina.com
  */
-public class LoadMoreListView extends ListView implements AbsListView.OnScrollListener {
+public class LoadMoreView extends ListView implements AbsListView.OnScrollListener {
 
     private View mLoadMoreView;
     private View mLoadCompleteView;
@@ -25,17 +25,17 @@ public class LoadMoreListView extends ListView implements AbsListView.OnScrollLi
     // 是否所有条目都可见
     private boolean mIsAllVisible;
 
-    public LoadMoreListView(Context context) {
+    public LoadMoreView(Context context) {
         super(context);
         init(context);
     }
 
-    public LoadMoreListView(Context context, AttributeSet attrs) {
+    public LoadMoreView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
-    public LoadMoreListView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public LoadMoreView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context);
     }
@@ -76,7 +76,8 @@ public class LoadMoreListView extends ListView implements AbsListView.OnScrollLi
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         // 判断总Item个数是否等于已显示Item个数
-        mIsAllVisible = totalItemCount == visibleItemCount;
+//        mIsAllVisible = totalItemCount == visibleItemCount;
+        mIsAllVisible = false;
     }
 
     /**

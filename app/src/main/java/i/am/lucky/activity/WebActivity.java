@@ -33,7 +33,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cazaea.sweetalert.SweetAlertDialog;
+
 import i.am.lucky.R;
+import i.am.lucky.app.MainApp;
 import i.am.lucky.config.AppConfig;
 import i.am.lucky.utils.LogUtil;
 import i.am.lucky.utils.LoginUtil;
@@ -43,8 +45,8 @@ import i.am.lucky.utils.UrlAnalysis;
 import i.am.lucky.config.EventConfig;
 import i.am.lucky.utils.reWeb.ReWebChromeClient;
 import i.am.lucky.utils.reWeb.ReWebViewClient;
+
 import com.tencent.smtt.export.external.interfaces.IX5WebChromeClient;
-import com.tencent.smtt.export.external.interfaces.IX5WebSettings;
 import com.tencent.smtt.export.external.interfaces.SslError;
 import com.tencent.smtt.export.external.interfaces.SslErrorHandler;
 import com.tencent.smtt.sdk.CacheManager;
@@ -58,6 +60,7 @@ import com.thejoyrun.router.RouterActivity;
 import com.thejoyrun.router.RouterField;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
+import com.yanzhenjie.permission.Permission;
 import com.yanzhenjie.permission.Rationale;
 import com.yanzhenjie.permission.RequestExecutor;
 import com.yanzhenjie.permission.SettingService;
@@ -84,13 +87,11 @@ public class WebActivity extends AppCompatActivity implements ReWebChromeClient.
     @BindView(R.id.web_iv_share)
     ImageView ivShare;
     @BindView(R.id.web_wv)
-    WebView webView; // webview
+    WebView webView; // WebView
 
     // 第一次路由传入的链接
     @RouterField("url")
     String url;
-
-    SweetAlertDialog dialog;
 
     // 标记位 登录失败后是否需要关闭本页面
     private String should_close_after_login_fail;
@@ -138,14 +139,14 @@ public class WebActivity extends AppCompatActivity implements ReWebChromeClient.
         permissionRequest(this);
         // 初始化控件
         setContentView(R.layout.activity_web);
-        // 控价初始化与属性设置
+        // 控件初始化与属性设置
         initAndSetDefaultValue();
         // 初始化WebView
         initWebView();
         // 首次加载页面
         loadUrl(ParamUtil.urlAddUserInfo(url));
         // 支持WebView使用比地浏览器下载或第三方应用下载
-        webView.setDownloadListener(new MyWebViewDownLoadListener());
+        supportDownload(webView);
     }
 
     /**
@@ -156,15 +157,16 @@ public class WebActivity extends AppCompatActivity implements ReWebChromeClient.
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
 
-        getWindow().setFormat(PixelFormat.TRANSLUCENT);//（这个对宿主没什么影响，建议声明）
+        // 避免闪屏和透明问题（这个对宿主没什么影响，建议声明）
+        getWindow().setFormat(PixelFormat.TRANSLUCENT);
+        // 避免输入法界面弹出后遮挡输入光标的问题
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         ivShare.setVisibility(View.GONE);
-        loadingDialog = new LoadingDialog(this, R.style.LoadingDialogStyle);
+        loadingDialog = new LoadingDialog(this, R.style.LoadingStyle);
 
         should_close_after_login_fail = "0";
 
-        dialog = new SweetAlertDialog(this, SweetAlertDialog.NORMAL_TYPE);
     }
 
     /**
@@ -173,31 +175,8 @@ public class WebActivity extends AppCompatActivity implements ReWebChromeClient.
     private Rationale mRationale = new Rationale() {
         @Override
         public void showRationale(Context context, List<String> permissions, final RequestExecutor executor) {
-//            // 默认用户允许授权
-//            executor.execute();
-            if (dialog != null) {
-                dialog
-                        .setConfirmText("授权")
-                        .setCancelText("取消")
-                        .setTitleText("需要权限")
-                        .setContentText("需要您授予权限才能继续操作。")
-                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                // 如果用户同意去设置：
-                                executor.execute();
-                            }
-                        })
-                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                // 如果用户不同意去设置：
-                                executor.cancel();
-                                sweetAlertDialog.cancel();
-                            }
-                        })
-                        .show();
-            }
+            // 默认用户允许授权
+            executor.execute();
         }
     };
 
@@ -206,31 +185,36 @@ public class WebActivity extends AppCompatActivity implements ReWebChromeClient.
      */
     private void permissionRequest(final Context context) {
 
+        // 权限提示弹框
+        final SweetAlertDialog dialog = new SweetAlertDialog(context, SweetAlertDialog.NORMAL_TYPE)
+                .setConfirmText("前往")
+                .setCancelText("取消")
+                .setTitleText("没有权限");
+
         // 权限集合
-        String[] permissions = new String[]{
+        String[] required_permissions = new String[]{
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.CALL_PHONE,
-                Manifest.permission.READ_LOGS,
-                Manifest.permission.READ_PHONE_STATE,
-                Manifest.permission.SET_DEBUG_APP,
-                Manifest.permission.SYSTEM_ALERT_WINDOW,
-                Manifest.permission.WRITE_APN_SETTINGS
+                Manifest.permission.READ_PHONE_STATE
+//                Manifest.permission.READ_LOGS,
+//                Manifest.permission.SET_DEBUG_APP,
+//                Manifest.permission.SYSTEM_ALERT_WINDOW,
+//                Manifest.permission.WRITE_APN_SETTINGS
         };
 
         // 动态申请权限
         AndPermission
                 .with(this)
-                .permission(permissions)
-//                .rationale(mRationale)
+                .permission(required_permissions)
+                .rationale(mRationale)
                 .onGranted(new Action() {
                     @Override
                     public void onAction(List<String> permissions) {
+
                         // 当所有权限都拿到时，开始处理
                         if (dialog != null && dialog.isShowing()) {
                             dialog.dismiss();
-                            dialog = null;
-                            Toast.makeText(WebActivity.this, "授权成功！", Toast.LENGTH_SHORT).show();
                         }
 
                     }
@@ -238,34 +222,38 @@ public class WebActivity extends AppCompatActivity implements ReWebChromeClient.
                 .onDenied(new Action() {
                     @Override
                     public void onAction(List<String> permissions) {
+
+                        // 未授权权限
+                        List<String> refuse_permissions = Permission.transformText(WebActivity.this, permissions);
+                        // 展示内容
+                        StringBuilder permissions_name = new StringBuilder();
+                        for (String name : refuse_permissions) {
+                            permissions_name.append("\n").append(name);
+                        }
+
                         // 这些权限被用户总是拒绝。
                         if (AndPermission.hasAlwaysDeniedPermission(context, permissions)) {
                             // 这里使用一个Dialog展示没有这些权限应用程序无法继续运行，询问用户是否去设置中授权。
-                            final SettingService settingService = AndPermission.permissionSetting(WebActivity.this);
+                            final SettingService settingService = AndPermission.permissionSetting(MainApp.getApp());
 
-                            if (dialog != null) {
-                                dialog
-                                        .setConfirmText("前往")
-                                        .setCancelText("取消")
-                                        .setTitleText("没有权限")
-                                        .setContentText("需要您授予权限才能继续操作。")
-                                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                            @Override
-                                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                                // 如果用户同意去设置：
-                                                settingService.execute();
-                                            }
-                                        })
-                                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                            @Override
-                                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                                // 如果用户不同意去设置：
-                                                settingService.cancel();
-                                                sweetAlertDialog.cancel();
-                                            }
-                                        })
-                                        .show();
-                            }
+                            dialog
+                                    .setContentText("需要您授予以下权限才能继续操作：\n" + permissions_name)
+                                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                        @Override
+                                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                            // 如果用户同意去设置：
+                                            settingService.execute();
+                                        }
+                                    })
+                                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                        @Override
+                                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                            // 如果用户不同意去设置：
+                                            settingService.cancel();
+                                            sweetAlertDialog.cancel();
+                                        }
+                                    })
+                                    .show();
 
                         }
                     }
@@ -274,40 +262,63 @@ public class WebActivity extends AppCompatActivity implements ReWebChromeClient.
 
     }
 
-
     /**
      * 初始化web内核设置
      */
     @SuppressLint("SetJavaScriptEnabled")
     private void initWebView() {
-        WebSettings webSettings = webView.getSettings();
+        WebSettings settings = webView.getSettings();
 
-        webSettings.setJavaScriptEnabled(true);
-        webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
-        webSettings.setAllowFileAccess(true);
-//        webSettings.setAllowFileAccessFromFileURLs (true);
-//        webSettings.setAllowUniversalAccessFromFileURLs (true);
-        webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
-        webSettings.setSupportZoom(true);
-        webSettings.setBuiltInZoomControls(true);
-        webSettings.setUseWideViewPort(true);
-        webSettings.setSupportMultipleWindows(true);
-//        webSettings.setLoadWithOverviewMode(true);
-        webSettings.setAppCacheEnabled(true);
-//        webSettings.setDatabaseEnabled(true);
-//        webSettings.setDatabasePath("...");
-        webSettings.setDomStorageEnabled(true);
-        webSettings.setGeolocationEnabled(true);
-//        webSettings.setGeolocationDatabasePath("...");
-        webSettings.setAppCacheMaxSize(Long.MAX_VALUE);
-//         webSettings.setPageCacheCapacity(IX5WebSettings.DEFAULT_CACHE_CAPACITY);
-        webSettings.setPluginState(WebSettings.PluginState.ON_DEMAND);
-//        webSettings.setRenderPriority(WebSettings.RenderPriority.HIGH);
-        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+        // 设置WebView可与Js代码进行交互
+        settings.setJavaScriptEnabled(true);
+        // 设置JS可打开WebView新窗口
+        settings.setJavaScriptCanOpenWindowsAutomatically(true);
+
+        settings.setAllowFileAccess(true);
+        // settings.setAllowFileAccessFromFileURLs (true);
+        // settings.setAllowUniversalAccessFromFileURLs (true);
+        settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
+
+        // 设置页面是否支持缩放
+        settings.setSupportZoom(true);
+        // 显示WebView提供的缩放控件
+        settings.setDisplayZoomControls(false);
+        settings.setBuiltInZoomControls(true);
+
+        // 被这个tag声明的宽度将被使用，页面没有tag或者没有提供一个宽度，那么一个宽型viewport将会被使用。
+        settings.setUseWideViewPort(true);
+        settings.setSupportMultipleWindows(true);
+        // settings.setLoadWithOverviewMode(true);
+        settings.setAppCacheEnabled(true);
+        // settings.setDatabaseEnabled(true);
+        // settings.setDatabasePath("...");
+
+        // 打开WebView的storage功能，使JS的localStorage,sessionStorage对象可用
+        settings.setDomStorageEnabled(true);
+        // 打开WebView的LBS功能，使JS的geolocation对象可用
+        settings.setGeolocationEnabled(true);
+        // settings.setGeolocationDatabasePath("...");
+
+        // 设置WebView的字体，默认为"sans-serif"
+        // settings.setStandardFontFamily("");
+        // 设置WebView字体的大小，默认为16
+        // settings.setDefaultFontSize(20);
+        // 设置WebView支持的最小字体大小，默认为8
+        // settings.setMinimumFontSize(12);
+
+        // 设置是否打开 WebView 表单数据的保存功能
+        // settings.setSaveFormData(true);
+
+        settings.setAppCacheMaxSize(Long.MAX_VALUE);
+        // settings.setPageCacheCapacity(IX5WebSettings.DEFAULT_CACHE_CAPACITY);
+        settings.setPluginState(WebSettings.PluginState.ON_DEMAND);
+        // settings.setRenderPriority(WebSettings.RenderPriority.HIGH);
+        settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
 
         OptBridge optBridge = new OptBridge();
         webView.addJavascriptInterface(optBridge, "OptBridge");
 
+        // WebViewClient主要辅助WebView执行处理各种响应请求事件
         webView.setWebViewClient(new ReWebViewClient() {
 
             @Override
@@ -487,7 +498,6 @@ public class WebActivity extends AppCompatActivity implements ReWebChromeClient.
             }
             if (msg.equals("userInfoRefresh")) {
                 EventBus.getDefault().post(EventConfig.EVENT_REFRESH_MINE);
-                return;
             }
 
         }
@@ -751,7 +761,14 @@ public class WebActivity extends AppCompatActivity implements ReWebChromeClient.
     }
 
     /**
-     * 支持下载功能
+     * 支持WebView使用比地浏览器下载或第三方应用下载
+     */
+    private void supportDownload(WebView view) {
+        view.setDownloadListener(new MyWebViewDownLoadListener());
+    }
+
+    /**
+     * 支持下载功能类实现
      */
     private class MyWebViewDownLoadListener implements DownloadListener {
 
@@ -761,6 +778,51 @@ public class WebActivity extends AppCompatActivity implements ReWebChromeClient.
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
             startActivity(intent);
         }
+
+    }
+
+    /**
+     * 图片长按保存
+     */
+    private void longClickSavePicture(WebView view) {
+        // 操作图片（完整代码）
+        view.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                WebView.HitTestResult result = ((WebView) v).getHitTestResult();
+                if (null == result)
+                    return false;
+                int type = result.getType();
+                if (type == WebView.HitTestResult.UNKNOWN_TYPE)
+                    return false;
+
+                // 这里可以拦截很多类型，我们只处理图片类型就可以了
+                switch (type) {
+                    case WebView.HitTestResult.PHONE_TYPE: // 处理拨号
+                        break;
+                    case WebView.HitTestResult.EMAIL_TYPE: // 处理Email
+                        break;
+                    case WebView.HitTestResult.GEO_TYPE: // 地图类型
+                        break;
+                    case WebView.HitTestResult.SRC_ANCHOR_TYPE: // 超链接
+                        break;
+                    case WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE: // 带有链接的图片类型
+                        break;
+                    case WebView.HitTestResult.IMAGE_TYPE: // 单纯的图片类型
+                        // 获取图片的路径
+                        String saveImgUrl = result.getExtra();
+                        // 跳转到图片详情页，显示图片
+//                        Intent i = new Intent(WebActivity.this, ImageActivity.class);
+//                        i.putExtra("imgUrl", saveImgUrl);
+//                        startActivity(i);
+                        break;
+                    default:
+                        break;
+                }
+                return true;
+            }
+
+        });
 
     }
 

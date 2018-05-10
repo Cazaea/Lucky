@@ -5,12 +5,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
+    android:orientation="vertical"
     tools:context=".activity.main.HomeActivity">
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/iv_photo"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_margin="20dp"
+        android:src="@mipmap/ic_launcher" />
 
     <TextView
         android:id="@+id/hello_world"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@color/colorAppBackground"
+        android:padding="10dp"
         android:text="我是首页!" />
 
 </LinearLayout>

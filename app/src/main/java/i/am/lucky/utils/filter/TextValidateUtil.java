@@ -11,8 +11,8 @@ public class TextValidateUtil {
     /**
      * 判断是否是金额(可转Bouble类型)
      *
-     * @param s
-     * @return
+     * @param s 类似金额的字符串
+     * @return 是否能转金额类型
      */
     public static boolean isDouble(String s) {
         try {

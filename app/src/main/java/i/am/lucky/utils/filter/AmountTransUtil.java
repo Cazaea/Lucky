@@ -8,15 +8,15 @@ import android.annotation.SuppressLint;
  * @mail wistorm@sina.com
  */
 
-public class AmountUtil {
+public class AmountTransUtil {
 
     public static String formatString(String info) {
-        String result = String.format("%.2f", Float.parseFloat(info));
+        @SuppressLint("DefaultLocale") String result = String.format("%.2f", Float.parseFloat(info));
         return result;
     }
 
     public static String formatFloat(float info) {
-        String result = String.format("%.2f", info);
+        @SuppressLint("DefaultLocale") String result = String.format("%.2f", info);
         return result;
     }
 }

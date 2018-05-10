@@ -1,5 +1,6 @@
 package i.am.lucky.utils;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Objects;
 
@@ -105,7 +106,7 @@ public class UrlAnalysis {
     public static String UrlMosaic(String urlWithoutValue, LinkedHashMap<String, String> params) {
         StringBuilder url = new StringBuilder(urlWithoutValue + "?");
         boolean firstFlag = true;
-        for (LinkedHashMap.Entry<String, String> entry : params.entrySet()) {
+        for (HashMap.Entry<String, String> entry : params.entrySet()) {
             if (firstFlag) {
                 url.append(entry.getKey()).append("=").append(entry.getValue());
                 firstFlag = false;

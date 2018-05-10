@@ -17,7 +17,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.cazaea.camera.util.LogUtil;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.loader.ImageLoader;
 import com.lzy.imagepicker.ui.ImageGridActivity;
@@ -32,8 +31,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import i.am.lucky.R;
+import i.am.lucky.activity.guide.GuideActivity;
 import i.am.lucky.activity.wechat.ShootingActivity;
 import i.am.lucky.config.AppConfig;
+import i.am.lucky.utils.LogUtil;
 
 /**
  * @author Cazaea
@@ -95,7 +96,8 @@ public class SiteActivity extends AppCompatActivity {
 //                startActivity(intent2);
                 break;
             case R.id.btn_guide:
-                Router.startActivity(this, AppConfig.ROUTER_TOTAL_HEAD + "guide");
+//                Router.startActivity(this, AppConfig.ROUTER_TOTAL_HEAD + "guide");
+                startActivity(new Intent(SiteActivity.this, GuideActivity.class));
                 break;
             case R.id.btn_ali_pay:
                 Router.startActivity(this, AppConfig.ROUTER_TOTAL_HEAD + "shoot");
@@ -174,8 +176,8 @@ public class SiteActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode==RESULT_OK){
-            switch (requestCode){
+        if (requestCode == RESULT_OK) {
+            switch (requestCode) {
                 case 101:
                     LogUtil.d("picture");
                     String path = data.getStringExtra("path");

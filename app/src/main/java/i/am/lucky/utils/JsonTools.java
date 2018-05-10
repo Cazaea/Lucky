@@ -4,33 +4,39 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
- * Created by zhouyuhao on 2017/6/21.
+ * json数据处理工具类
+ * Created by Cazaea on 2017/6/21.
  */
 
 public class JsonTools {
-    public static JSONArray joinJSONArray(JSONArray mData, JSONArray array) {
-        StringBuffer buffer = new StringBuffer();
+    /**
+     * @param mData 原数据
+     * @param array 新数据
+     * @return 拼接后的总数据
+     */
+    public static JSONArray spliceJson(JSONArray mData, JSONArray array) {
+        StringBuilder builder = new StringBuilder();
         try {
             int len = mData.length();
             for (int i = 0; i < len; i++) {
                 JSONObject obj1 = (JSONObject) mData.get(i);
                 if (i == len - 1)
-                    buffer.append(obj1.toString());
+                    builder.append(obj1.toString());
                 else
-                    buffer.append(obj1.toString()).append(",");
+                    builder.append(obj1.toString()).append(",");
             }
             len = array.length();
             if (len > 0)
-                buffer.append(",");
+                builder.append(",");
             for (int i = 0; i < len; i++) {
                 JSONObject obj1 = (JSONObject) array.get(i);
                 if (i == len - 1)
-                    buffer.append(obj1.toString());
+                    builder.append(obj1.toString());
                 else
-                    buffer.append(obj1.toString()).append(",");
+                    builder.append(obj1.toString()).append(",");
             }
-            buffer.insert(0, "[").append("]");
-            return new JSONArray(buffer.toString());
+            builder.insert(0, "[").append("]");
+            return new JSONArray(builder.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -131,8 +131,6 @@ public class MainApp extends Application {
             }
         });
 
-//        XGPushManager.registerPush(this, "*");
-
     }
 
     /**

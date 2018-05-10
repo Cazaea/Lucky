@@ -239,7 +239,6 @@ public class VideoActivity extends AppCompatActivity {
                         hotMoviesBean = new Gson().fromJson(s, HotMoviesBean.class);
                         List<HotMoviesBean.SubjectsBean> hotMovies = hotMoviesBean.getSubjects();
 
-
 //                        if (pageIndex != 0) {
 //                            if (hotMovies != null) {
 //                                hotMovies = JsonTools.joinJSONArray(info, titles);

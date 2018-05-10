@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  * @time 2018/3/6 16:05
  * @mail wistorm@sina.com
  */
-public class AmountLimitUtil implements InputFilter {
+public class AmountFilter implements InputFilter {
 
     // 输入的最大金额
     private static final int MAX_VALUE = Integer.MAX_VALUE;
@@ -28,9 +28,9 @@ public class AmountLimitUtil implements InputFilter {
 
     private static final String ZERO = "0";
 
-    Pattern mPattern;
+    private Pattern mPattern;
 
-    public AmountLimitUtil() {
+    public AmountFilter() {
         // 用于匹配输入的是0-9  .  这几个数字和字符
         mPattern = Pattern.compile("([0-9]|\\.)*");
     }
@@ -59,7 +59,7 @@ public class AmountLimitUtil implements InputFilter {
                 return "";
             } else {
                 // 只能输入一个小数点
-                if (POINTER.equals(source)) {
+                if (POINTER.contentEquals(source)) {
                     return "";
                 }
             }
@@ -77,7 +77,7 @@ public class AmountLimitUtil implements InputFilter {
                 return "";
             } else {
                 // 第一个位置输入小数点的情况
-                if ((POINTER.equals(source)) && TextUtils.isEmpty(destText)) {
+                if ((POINTER.contentEquals(source)) && TextUtils.isEmpty(destText)) {
                     return "";
                 }
             }

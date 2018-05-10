@@ -3,4 +3,6 @@
     <!-- 视频录制相关 -->
     <string name="video_retry">重录</string>
     <string name="video_ok">确定</string>
+
+    <string name="appId">${applicationId}</string>
 </resources>
